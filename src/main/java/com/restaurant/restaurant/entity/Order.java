@@ -25,7 +25,8 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "table_id")
     private com.restaurant.restaurant.entity.Table table;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany
+    @JoinColumn(name = "order_id")
     private List<OrderDetails> dishes;
 
     /*@ManyToMany(fetch = FetchType.EAGER)

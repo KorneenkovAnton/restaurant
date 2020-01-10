@@ -12,7 +12,7 @@ public class OrderDetails extends BaseEntity {
     private int num;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id",insertable = false,updatable = false)
     private Order order;
 
     @ManyToOne
