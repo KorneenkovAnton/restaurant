@@ -2,8 +2,10 @@ package com.restaurant.restaurant.validator;
 
 import com.restaurant.restaurant.dto.RegistrationRequestDto;
 import com.restaurant.restaurant.entity.Role;
+import org.springframework.stereotype.Service;
 
 
+@Service
 public class UserValidator implements Validator<RegistrationRequestDto> {
 
     private String NAME_REGEX = "[а-яА-ЯёЁa-zA-Z '-]+$";

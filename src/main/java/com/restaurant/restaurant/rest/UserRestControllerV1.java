@@ -19,15 +19,12 @@ import java.util.Map;
 public class UserRestControllerV1  {
 
     private final UserService userService;
-    private final JwtTokenProvider jwtTokenProvider;
     private final ControllerService controllerService;
 
     @Autowired
     public UserRestControllerV1(UserService userService,
-                                JwtTokenProvider jwtTokenProvider,
                                 ControllerService controllerService) {
 
-        this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;
         this.controllerService = controllerService;
     }
@@ -56,19 +53,14 @@ public class UserRestControllerV1  {
 
     @PutMapping("/update")
     public ResponseEntity updateUser(@RequestBody UserDto requestDto, HttpServletRequest request){
-        Validator validator = new UserValidator();
         Map<Object, Object> response;
 
-        if (validator.validate(requestDto) &&
-                jwtTokenProvider.getUsername(jwtTokenProvider.resolveToken(request,"Authorization"))
-                        .equals(requestDto.getEmail())&&
-                jwtTokenProvider.getUserId(jwtTokenProvider.resolveToken(request,"Authorization"))
-                        .compareTo(requestDto.getId())== 0) {
+        if (controllerService.getUpdateAccess(requestDto,request)) {
 
             User user = new User(requestDto);
             user.setId(requestDto.getId());
 
-            response = controllerService.generateTokens(user = userService.update(user));
+            response = controllerService.generateTokens(userService.update(user));
 
             response.put("answer", "user " + user.getEmail() + " updated");
 
