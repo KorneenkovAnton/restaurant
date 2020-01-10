@@ -1,0 +1,247 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet id="3.1" author="admin">
+        <createTable tableName="user">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(100)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+            </column>
+            <column name="lastname" type="VARCHAR(255)">
+            </column>
+            <column name="address" type="VARCHAR(100)">
+            </column>
+            <column name="phonenumber" type="VARCHAR(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(100)" defaultValue="USER"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3.2" author="admin">
+        <createTable tableName="dish">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="description" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cost" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="availability" type="BOOLEAN" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dish_type_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="3.3" author="admin">
+        <createTable tableName="comment">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="text" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="DATETIME" defaultValue="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rating" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT"/>
+            <column name="dish_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="3.4" author="admin">
+        <createTable tableName="table">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(10)" defaultValue="EMPTY"/>
+            <column name="user_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="3.5" author="admin">
+        <createTable tableName="order">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="date" type="DATETIME" defaultValue="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(10)" defaultValue="PREPARE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="info" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT"/>
+            <column name="table_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="3.6" author="admin">
+        <createTable tableName="order_details">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="order_id" type="BIGINT"/>
+            <column name="dish_id" type="BIGINT"/>
+            <column name="num" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="3.7" author="admin">
+        <createTable tableName="staff">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="status" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lastname" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="profession" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rating" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3.8" author="admin">
+        <createTable tableName="staff_rating">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="order_id" type="BIGINT">
+               <constraints nullable="false"/>
+            </column>
+            <column name="staff_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rating" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3.9" author="admin">
+        <addForeignKeyConstraint baseTableName="comment"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_comment_user"
+                                 referencedTableName="user"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="3.10" author="admin">
+        <addForeignKeyConstraint baseTableName="comment"
+                                 baseColumnNames="dish_id"
+                                 constraintName="fk_dish_comment"
+                                 referencedTableName="dish"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="3.11" author="admin">
+        <addForeignKeyConstraint baseTableName="order_details"
+                                 baseColumnNames="dish_id"
+                                 constraintName="fk_order_details_dish"
+                                 referencedTableName="dish"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="3.12" author="admin">
+        <addForeignKeyConstraint baseTableName="order_details"
+                                 baseColumnNames="order_id"
+                                 constraintName="fk_order_details_order"
+                                 referencedTableName="order"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+    <changeSet id="3.13" author="admin">
+        <addForeignKeyConstraint baseTableName="order"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_order_user"
+                                 referencedTableName="user"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="3.14" author="admin">
+        <addForeignKeyConstraint baseTableName="order"
+                                 baseColumnNames="table_id"
+                                 constraintName="fk_order_table"
+                                 referencedTableName="table"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="3.15" author="admin">
+        <addForeignKeyConstraint baseTableName="table"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_table_user"
+                                 referencedTableName="user"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="3.16" author="admin">
+        <addForeignKeyConstraint baseTableName="staff_rating"
+                                 baseColumnNames="order_id"
+                                 constraintName="fk_staff_r_order"
+                                 referencedTableName="order"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="3.17" author="admin">
+        <addForeignKeyConstraint baseTableName="staff_rating"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_staff_r_user"
+                                 referencedTableName="user"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="3.18" author="admin">
+        <addForeignKeyConstraint baseTableName="staff_rating"
+                                 baseColumnNames="staff_id"
+                                 constraintName="fr_staff_r_staff"
+                                 referencedTableName="staff"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="3.20" author="admin">
+        <createTable tableName="dish_type">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3.19" author="admin">
+        <addForeignKeyConstraint baseTableName="dish"
+                                 baseColumnNames="dish_type_id"
+                                 constraintName="fk_dish_type"
+                                 referencedTableName="dish_type"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>
