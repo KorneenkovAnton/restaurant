@@ -23,11 +23,15 @@ public class UserRestControllerV1  {
     private final ControllerService controllerService;
 
     @Autowired
-    public UserRestControllerV1(UserService userService, JwtTokenProvider jwtTokenProvider, ControllerService controllerService) {
+    public UserRestControllerV1(UserService userService,
+                                JwtTokenProvider jwtTokenProvider,
+                                ControllerService controllerService) {
+
         this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;
         this.controllerService = controllerService;
     }
+
 
     @GetMapping("/get/{id:[0-9]}")
     public ResponseEntity getUserById(@PathVariable Long id){
@@ -41,12 +45,14 @@ public class UserRestControllerV1  {
         }
     }
 
+
     @DeleteMapping("/delete/{id:[0-9]}")
     public ResponseEntity deleteUserById(@PathVariable Long id){
         userService.delete(id);
 
         return ResponseEntity.ok("User deleted");
     }
+
 
     @PutMapping("/update")
     public ResponseEntity updateUser(@RequestBody UserDto requestDto, HttpServletRequest request){
@@ -61,11 +67,10 @@ public class UserRestControllerV1  {
 
             User user = new User(requestDto);
             user.setId(requestDto.getId());
-            user = userService.update(user);
 
-            response = controllerService.generateTokens(user);
+            response = controllerService.generateTokens(user = userService.update(user));
 
-            response.put("answer", "user "+user.getEmail()+" updated");
+            response.put("answer", "user " + user.getEmail() + " updated");
 
             return ResponseEntity.ok(response);
         }else {
@@ -73,8 +78,10 @@ public class UserRestControllerV1  {
         }
     }
 
+
     @GetMapping("/getAllUsers")
     public ResponseEntity getAllUsers(){
         return ResponseEntity.ok(userService.getAll());
     }
+
 }
