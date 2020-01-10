@@ -7,6 +7,8 @@ import com.restaurant.restaurant.entity.User;
 import com.restaurant.restaurant.security.jwt.JwtAuthenticationException;
 import com.restaurant.restaurant.security.jwt.JwtTokenProvider;
 import com.restaurant.restaurant.service.UserService;
+import com.restaurant.restaurant.validator.UserValidator;
+import com.restaurant.restaurant.validator.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -51,8 +53,8 @@ public class AuthenticationRestControllerV1 {
                 throw new UsernameNotFoundException("email");
             }
 
-            String accessToken = jwtTokenProvider.createAccessToken(username,user.getPassword());
-            String refreshToken = jwtTokenProvider.createRefreshToken(username);
+            String accessToken = jwtTokenProvider.createAccessToken(username,user.getPassword(),user.getId());
+            String refreshToken = jwtTokenProvider.createRefreshToken(username,user.getId());
 
             Map<Object,Object> response = new HashMap<>();
             response.put("accessToken",accessToken);
@@ -65,7 +67,7 @@ public class AuthenticationRestControllerV1 {
     }
 
     @PostMapping("refresh")
-    public ResponseEntity refresh(@RequestBody RefreshJwtRequestDto requestDto) throws JwtAuthenticationException {
+    public ResponseEntity refreshToken(@RequestBody RefreshJwtRequestDto requestDto) throws JwtAuthenticationException {
         Map<Object, Object> response = null;
         String username;
 
@@ -77,8 +79,8 @@ public class AuthenticationRestControllerV1 {
                 throw new UsernameNotFoundException(username);
             }
 
-            String accessToken = jwtTokenProvider.createAccessToken(username,user.getPassword());
-            String refreshToken = jwtTokenProvider.createRefreshToken(username);
+            String accessToken = jwtTokenProvider.createAccessToken(username,user.getPassword(),user.getId());
+            String refreshToken = jwtTokenProvider.createRefreshToken(username,user.getId());
 
             response = new HashMap<>();
             response.put("accessToken",accessToken);
@@ -89,16 +91,23 @@ public class AuthenticationRestControllerV1 {
 
     @PostMapping("register")
     public ResponseEntity register(@RequestBody RegistrationRequestDto registrationRequestDto){
-        User user = new User(registrationRequestDto);
-        user = userService.register(user);
-
-        String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(),user.getPassword());
-        String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail());
-
         Map<Object, Object> response  = new HashMap<>();
-        response.put("accessToken",accessToken);
-        response.put("refreshToken",refreshToken);
+        Validator validator = new UserValidator();
 
-        return ResponseEntity.ok(response);
+        if(validator.validate(registrationRequestDto)){
+
+            User user = new User(registrationRequestDto);
+            user = userService.register(user);
+
+            String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(),user.getPassword(),user.getId());
+            String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail(),user.getId());
+
+            response.put("accessToken",accessToken);
+            response.put("refreshToken",refreshToken);
+
+            return ResponseEntity.ok(response);
+        }else {
+            return ResponseEntity.badRequest().body("ValidationError");
+        }
     }
 }

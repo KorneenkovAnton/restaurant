@@ -2,6 +2,8 @@ package com.restaurant.restaurant.entity;
 
 import com.restaurant.restaurant.dto.RegistrationRequestDto;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -31,6 +33,8 @@ public class User extends BaseEntity {
         this.phonenumber = requestDto.getPhonenumber();
         this.role = Role.valueOf(requestDto.getRole());
     }
+
+
 
     public User() {
     }

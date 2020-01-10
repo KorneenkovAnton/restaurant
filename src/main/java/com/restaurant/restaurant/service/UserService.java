@@ -1,6 +1,7 @@
 package com.restaurant.restaurant.service;
 
 import com.restaurant.restaurant.entity.User;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -11,6 +12,8 @@ import java.util.List;
 public interface UserService {
 
     User register(User user);
+
+    void update(User user);
 
     List<User> getAll();
 

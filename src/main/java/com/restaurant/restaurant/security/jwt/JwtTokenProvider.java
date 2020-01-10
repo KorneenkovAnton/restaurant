@@ -43,9 +43,10 @@ public class JwtTokenProvider {
         secret = Base64.getEncoder().encodeToString(secret.getBytes());
     }
 
-    public String createAccessToken(String username, String password){
+    public String createAccessToken(String username, String password,Long id){
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("Password",password);
+        claims.put("id",id);
 
         Date dateNow = new Date();
         Date validity = new Date(dateNow.getTime() + validityInMSAccess);
@@ -58,8 +59,9 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String createRefreshToken(String username){
+    public String createRefreshToken(String username,Long id){
         Claims claims = Jwts.claims().setSubject(username);
+        claims.put("id",id);
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMSRefresh);
@@ -79,6 +81,10 @@ public class JwtTokenProvider {
 
     public String getUsername(String token){
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public Long getUserId(String token){
+        return Long.parseLong(Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().get("id").toString());
     }
 
     public String resolveToken(HttpServletRequest request,String headerName){

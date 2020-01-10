@@ -29,13 +29,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public User register(User user) {
         user.setRole(Role.USER);
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        return userRepository.saveAndFlush(user);
+    }
+
+    @Override
+    public void update(User user) {
+        userRepository.save(user);
     }
 
     @Override
     public List<User> getAll() {
-        return null;
+        return userRepository.findAll();
     }
 
     @Override
