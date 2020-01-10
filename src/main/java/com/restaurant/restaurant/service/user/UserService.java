@@ -1,19 +1,16 @@
-package com.restaurant.restaurant.service;
+package com.restaurant.restaurant.service.user;
 
 import com.restaurant.restaurant.entity.User;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-/**
- * Created by Антон on 09.01.2020.
- */
 
 public interface UserService {
 
     User register(User user);
 
-    void update(User user);
+    User update(User user);
 
     List<User> getAll();
 

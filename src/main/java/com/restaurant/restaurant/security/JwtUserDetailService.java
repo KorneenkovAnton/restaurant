@@ -2,7 +2,7 @@ package com.restaurant.restaurant.security;
 
 import com.restaurant.restaurant.entity.User;
 import com.restaurant.restaurant.security.jwt.JwtUserFactory;
-import com.restaurant.restaurant.service.UserService;
+import com.restaurant.restaurant.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
