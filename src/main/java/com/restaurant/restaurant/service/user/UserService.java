@@ -1,22 +1,11 @@
 package com.restaurant.restaurant.service.user;
 
 import com.restaurant.restaurant.entity.User;
-import org.springframework.data.jpa.repository.Query;
-
-import java.util.List;
+import com.restaurant.restaurant.service.Service;
 
 
-public interface UserService {
-
-    User register(User user);
-
-    User update(User user);
-
-    List<User> getAll();
+public interface UserService extends Service<User> {
 
     User findByLogin(String username);
 
-    User findById(Long id);
-
-    void delete(Long id);
 }

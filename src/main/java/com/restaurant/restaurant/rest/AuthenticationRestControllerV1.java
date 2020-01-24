@@ -45,9 +45,9 @@ public class AuthenticationRestControllerV1 {
     }
 
 
-
     @PostMapping("login")
     public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto){
+
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestDto.getUsername(),requestDto.getPassword()));
             User user = controllerServiceImpl.convertUser(requestDto);
@@ -63,11 +63,12 @@ public class AuthenticationRestControllerV1 {
     }
 
 
-
     @PostMapping("refresh")
     public ResponseEntity refreshToken(@RequestBody RefreshJwtRequestDto requestDto) throws JwtAuthenticationException {
         String username;
-        User user = null;
+        ResponseEntity responseEntity;
+
+        User user;
 
         if(jwtTokenProvider.validateToken(requestDto.getRefreshToken())){
 
@@ -75,12 +76,16 @@ public class AuthenticationRestControllerV1 {
             user = userService.findByLogin(username);
 
             if(user == null){
-                throw new UsernameNotFoundException(username);
+                responseEntity = ResponseEntity.badRequest().body("Wrong username");
+            }else {
+                responseEntity = ResponseEntity.ok(controllerServiceImpl.generateTokens(user));
             }
+        }else {
+            responseEntity = ResponseEntity.badRequest().body("Old token");
         }
-        return ResponseEntity.ok(controllerServiceImpl.generateTokens(user));
-    }
 
+        return responseEntity;
+    }
 
 
     @PostMapping("register")
@@ -90,9 +95,9 @@ public class AuthenticationRestControllerV1 {
         if(validator.validate(registrationRequestDto)){
 
             User user = new User(registrationRequestDto);
-            user = userService.register(user);
+            userService.save(user);
 
-            return ResponseEntity.ok(controllerServiceImpl.generateTokens(user));
+            return ResponseEntity.ok("OK");
         }else {
             return ResponseEntity.badRequest().body("ValidationError");
         }

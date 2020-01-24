@@ -1,17 +1,15 @@
 package com.restaurant.restaurant.rest;
 
+import com.restaurant.restaurant.dto.RegistrationRequestDto;
 import com.restaurant.restaurant.dto.UserDto;
 import com.restaurant.restaurant.entity.User;
-import com.restaurant.restaurant.security.jwt.JwtTokenProvider;
 import com.restaurant.restaurant.service.controller.ControllerService;
 import com.restaurant.restaurant.service.user.UserService;
-import com.restaurant.restaurant.validator.UserValidator;
-import com.restaurant.restaurant.validator.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @RestController
@@ -52,17 +50,16 @@ public class UserRestControllerV1  {
 
 
     @PutMapping("/update")
-    public ResponseEntity updateUser(@RequestBody UserDto requestDto, HttpServletRequest request){
+    public ResponseEntity updateUser(@RequestBody RegistrationRequestDto requestDto, Authentication authentication){
         Map<Object, Object> response;
 
-        if (controllerService.getUpdateAccess(requestDto,request)) {
+        if (requestDto.getEmail().equals(authentication.getName())) {
 
-            User user = new User(requestDto);
-            user.setId(requestDto.getId());
+            User user = controllerService.convertUser(requestDto);
 
             response = controllerService.generateTokens(userService.update(user));
 
-            response.put("answer", "user " + user.getEmail() + " updated");
+            response.put("user",user);
 
             return ResponseEntity.ok(response);
         }else {
@@ -70,6 +67,10 @@ public class UserRestControllerV1  {
         }
     }
 
+    @GetMapping("/getForUpdate")
+    public ResponseEntity getUserForUpdate(Authentication authentication){
+        return ResponseEntity.ok(userService.findByLogin(authentication.getName()));
+    }
 
     @GetMapping("/getAllUsers")
     public ResponseEntity getAllUsers(){

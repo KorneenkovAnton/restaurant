@@ -12,5 +12,5 @@ public interface Validator<T> {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(string);
         return matcher.matches();
-    };
+    }
 }

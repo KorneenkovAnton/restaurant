@@ -32,7 +32,7 @@ public class JwtUser implements UserDetails {
         this.lastname = lastname;
         this.address = address;
         this.phonenumber = phonenumber;
-        this.autorities = new ArrayList<SimpleGrantedAuthority>();
+        this.autorities = new ArrayList<>();
         autorities.add(new SimpleGrantedAuthority(role.name()));
     }
 

@@ -14,9 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Антон on 10.01.2020.
- */
 @Service
 public class ControllerServiceImpl implements ControllerService {
 
@@ -31,17 +28,10 @@ public class ControllerServiceImpl implements ControllerService {
         this.validator = validator;
     }
 
-    @Override
-    public boolean getUpdateAccess(UserDto requestDto,HttpServletRequest request) {
-        return validator.validate(requestDto) &&
-                jwtTokenProvider.getUsername(jwtTokenProvider.resolveToken(request,"Authorization"))
-                        .equals(requestDto.getEmail())&&
-                jwtTokenProvider.getUserId(jwtTokenProvider.resolveToken(request,"Authorization"))
-                        .compareTo(requestDto.getId())== 0;
-    }
-
     public User convertUser(RegistrationRequestDto requestDto){
-        return userService.findByLogin(requestDto.getEmail());
+        User user = new User(requestDto);
+        user.setId(userService.findByLogin(requestDto.getEmail()).getId());
+        return user;
     }
     public User convertUser(AuthenticationRequestDto requestDto){
         return userService.findByLogin(requestDto.getUsername());

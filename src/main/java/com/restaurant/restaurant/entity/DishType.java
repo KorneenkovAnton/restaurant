@@ -13,4 +13,11 @@ import javax.persistence.Table;
 @Data
 public class DishType extends BaseEntity {
     private String name;
+
+    public DishType(String name) {
+        this.name = name;
+    }
+
+    public DishType() {
+    }
 }
