@@ -67,23 +67,27 @@ public class AuthenticationRestControllerV1 {
     public ResponseEntity refreshToken(@RequestBody RefreshJwtRequestDto requestDto) throws JwtAuthenticationException {
         String username;
         ResponseEntity responseEntity;
-
         User user;
 
-        if(jwtTokenProvider.validateToken(requestDto.getRefreshToken())){
+        System.out.println(requestDto.getRefreshToken());
+        try{
+            if(jwtTokenProvider.validateToken(requestDto.getRefreshToken())){
 
             username = jwtTokenProvider.getUsername(requestDto.getRefreshToken());
             user = userService.findByLogin(username);
 
-            if(user == null){
-                responseEntity = ResponseEntity.badRequest().body("Wrong username");
+                if(user == null){
+                    responseEntity = ResponseEntity.badRequest().body("Wrong username");
+                }else {
+                    responseEntity = ResponseEntity.ok(controllerServiceImpl.generateTokens(user));
+                }
             }else {
-                responseEntity = ResponseEntity.ok(controllerServiceImpl.generateTokens(user));
+                responseEntity = ResponseEntity.badRequest().body("Old token");
             }
-        }else {
+        }catch (JwtAuthenticationException e){
+            e.printStackTrace();
             responseEntity = ResponseEntity.badRequest().body("Old token");
         }
-
         return responseEntity;
     }
 
