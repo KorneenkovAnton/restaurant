@@ -9,8 +9,10 @@ import com.restaurant.restaurant.entity.Order;
 import com.restaurant.restaurant.entity.User;
 import com.restaurant.restaurant.service.dish.DishService;
 import com.restaurant.restaurant.service.order.OrderService;
+import com.restaurant.restaurant.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,11 +24,13 @@ public class OrderRestControllerV1 {
 
     private final OrderService orderService;
     private final DishService dishService;
+    private final UserService userService;
 
     @Autowired
-    public OrderRestControllerV1(OrderService orderService, DishService dishService) {
+    public OrderRestControllerV1(OrderService orderService, DishService dishService, UserService userService) {
         this.orderService = orderService;
         this.dishService = dishService;
+        this.userService = userService;
     }
 
     @GetMapping("/dish/getByType/{type}")
@@ -62,9 +66,9 @@ public class OrderRestControllerV1 {
         }
     }
 
-    @PostMapping("/order/getByUser/}")
-    public ResponseEntity getByUser(@RequestBody UserDto userDto){
-        List<Order> orders = orderService.getUserOrders(new User(userDto));
+    @GetMapping("/order/getByUser")
+    public ResponseEntity getByUser(Authentication authentication){
+        List<Order> orders = orderService.getUserOrders(userService.findByLogin(authentication.getName()));
 
         if(!orders.isEmpty()){
             return ResponseEntity.ok(orders);
@@ -74,8 +78,10 @@ public class OrderRestControllerV1 {
     }
 
     @PostMapping("/order/save")
-    public ResponseEntity save(@RequestBody OrderDto orderDto){
-        if(orderService.save(new Order(orderDto)) != null){
+    public ResponseEntity save(@RequestBody OrderDto orderDto, Authentication authentication){
+        Order order = new Order(orderDto);
+        order.setUser(userService.findByLogin(authentication.getName()));
+        if(orderService.save(order) != null){
             return ResponseEntity.ok("Ok");
         }else {
             return ResponseEntity.badRequest().body("Error");

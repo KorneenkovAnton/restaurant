@@ -3,7 +3,6 @@ package com.restaurant.restaurant.service.user;
 import com.restaurant.restaurant.entity.Role;
 import com.restaurant.restaurant.entity.User;
 import com.restaurant.restaurant.repository.UserRepository;
-import com.restaurant.restaurant.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(User user) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         return userRepository.saveAndFlush(user);
     }
 
@@ -57,5 +55,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public String updatePassword(String oldPassword,String newPassword,String username){
+        String newPasswordEncode = bCryptPasswordEncoder.encode(newPassword);
+            userRepository.updatePasswordByUser(newPasswordEncode,username);
+
+        return newPasswordEncode;
+
     }
 }

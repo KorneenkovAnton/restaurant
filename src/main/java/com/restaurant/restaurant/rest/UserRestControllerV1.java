@@ -1,12 +1,14 @@
 package com.restaurant.restaurant.rest;
 
 import com.restaurant.restaurant.dto.RegistrationRequestDto;
-import com.restaurant.restaurant.dto.UserDto;
+import com.restaurant.restaurant.dto.UpdatePasswordDto;
 import com.restaurant.restaurant.entity.User;
 import com.restaurant.restaurant.service.controller.ControllerService;
 import com.restaurant.restaurant.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,13 +20,15 @@ public class UserRestControllerV1  {
 
     private final UserService userService;
     private final ControllerService controllerService;
+    private final AuthenticationManager authenticationManager;
 
     @Autowired
     public UserRestControllerV1(UserService userService,
-                                ControllerService controllerService) {
+                                ControllerService controllerService, AuthenticationManager authenticationManager) {
 
         this.userService = userService;
         this.controllerService = controllerService;
+        this.authenticationManager = authenticationManager;
     }
 
 
@@ -77,4 +81,18 @@ public class UserRestControllerV1  {
         return ResponseEntity.ok(userService.getAll());
     }
 
+    @PostMapping("/updatePassword")
+    public ResponseEntity updatePassword(@RequestBody UpdatePasswordDto updatePasswordDto,Authentication authentication){
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authentication.getName(),
+                updatePasswordDto.getOldPassword()));
+        String newPassword = userService.updatePassword(updatePasswordDto.getOldPassword(),updatePasswordDto.getNewPassword(),
+                authentication.getName());
+        if(newPassword != null){
+            updatePasswordDto.setNewPassword(newPassword);
+            updatePasswordDto.setOldPassword(null);
+            return ResponseEntity.ok(updatePasswordDto);
+        }else {
+            return ResponseEntity.unprocessableEntity().body("Wrong old password");
+        }
+    }
 }

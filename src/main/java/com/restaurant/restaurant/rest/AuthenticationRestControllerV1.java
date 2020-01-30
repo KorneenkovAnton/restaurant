@@ -49,7 +49,8 @@ public class AuthenticationRestControllerV1 {
     public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto){
 
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestDto.getUsername(),requestDto.getPassword()));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestDto.getUsername(),
+                    requestDto.getPassword()));
             User user = controllerServiceImpl.convertUser(requestDto);
 
             if( user == null){

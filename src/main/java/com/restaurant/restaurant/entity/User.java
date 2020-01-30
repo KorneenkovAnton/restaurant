@@ -2,6 +2,7 @@ package com.restaurant.restaurant.entity;
 
 import com.restaurant.restaurant.dto.RegistrationRequestDto;
 import lombok.Data;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -13,6 +14,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "user")
 @Data
+@DynamicUpdate
 public class User extends BaseEntity {
     private String email;
     private String password;
