@@ -70,6 +70,11 @@ public class OrderRestControllerV1 {
     public ResponseEntity getByUser(Authentication authentication){
         List<Order> orders = orderService.getUserOrders(userService.findByLogin(authentication.getName()));
 
+        for (Order or:orders
+             ) {
+            System.out.println(or.getDishes().get(0).getDish().getName());
+        }
+
         if(!orders.isEmpty()){
             return ResponseEntity.ok(orders);
         }else {

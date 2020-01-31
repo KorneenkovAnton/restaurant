@@ -15,6 +15,7 @@ import java.util.List;
 public class OrderDto {
     @JsonIgnore
     private Date date = null;
+
     private Integer amount;
     private String status;
     private String info;

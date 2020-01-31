@@ -18,7 +18,6 @@ public class OrderDetails extends BaseEntity {
     private Order order;
 
     @ManyToOne
-    @JsonBackReference
     @JoinColumn(name = "dish_id")
     private Dish dish;
 

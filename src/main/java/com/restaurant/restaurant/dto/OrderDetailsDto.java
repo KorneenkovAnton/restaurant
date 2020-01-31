@@ -8,5 +8,5 @@ import lombok.Data;
 @Data
 public class OrderDetailsDto {
     private Integer num;
-    private DishDto dishDto;
+    private DishDto dish;
 }

@@ -47,9 +47,9 @@ public class Order extends BaseEntity {
 
         for (OrderDetailsDto or:orderDto.getDishes()
              ) {
-            dishes.add(new OrderDetails(or.getNum(),this, new Dish(or.getDishDto().getId(),
-                    or.getDishDto().getName(),or.getDishDto().getDescription(),
-                    or.getDishDto().getCost(),true,null)));
+            dishes.add(new OrderDetails(or.getNum(),this, new Dish(or.getDish().getId(),
+                    or.getDish().getName(),or.getDish().getDescription(),
+                    or.getDish().getCost(),true,null)));
         }
     }
 
