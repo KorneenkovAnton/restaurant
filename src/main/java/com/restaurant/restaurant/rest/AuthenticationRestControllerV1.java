@@ -70,7 +70,6 @@ public class AuthenticationRestControllerV1 {
         ResponseEntity responseEntity;
         User user;
 
-        System.out.println(requestDto.getRefreshToken());
         try{
             if(jwtTokenProvider.validateToken(requestDto.getRefreshToken())){
 

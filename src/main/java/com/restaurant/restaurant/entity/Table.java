@@ -7,7 +7,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-@javax.persistence.Table(name = "table")
+@javax.persistence.Table(name = "rest_table")
 @Data
 public class Table extends BaseEntity {
     private String name;

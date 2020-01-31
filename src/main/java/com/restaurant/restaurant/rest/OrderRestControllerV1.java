@@ -2,13 +2,13 @@ package com.restaurant.restaurant.rest;
 
 import com.restaurant.restaurant.dto.OrderDto;
 import com.restaurant.restaurant.dto.OrderUpdateDto;
-import com.restaurant.restaurant.dto.UserDto;
 import com.restaurant.restaurant.entity.Dish;
 import com.restaurant.restaurant.entity.DishType;
 import com.restaurant.restaurant.entity.Order;
-import com.restaurant.restaurant.entity.User;
+import com.restaurant.restaurant.entity.Table;
 import com.restaurant.restaurant.service.dish.DishService;
 import com.restaurant.restaurant.service.order.OrderService;
+import com.restaurant.restaurant.service.table.TableService;
 import com.restaurant.restaurant.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +25,15 @@ public class OrderRestControllerV1 {
     private final OrderService orderService;
     private final DishService dishService;
     private final UserService userService;
+    private final TableService tableService;
 
     @Autowired
-    public OrderRestControllerV1(OrderService orderService, DishService dishService, UserService userService) {
+    public OrderRestControllerV1(OrderService orderService, DishService dishService, UserService userService,
+                                 TableService tableService) {
         this.orderService = orderService;
         this.dishService = dishService;
         this.userService = userService;
+        this.tableService = tableService;
     }
 
     @GetMapping("/dish/getByType/{type}")
@@ -70,11 +73,6 @@ public class OrderRestControllerV1 {
     public ResponseEntity getByUser(Authentication authentication){
         List<Order> orders = orderService.getUserOrders(userService.findByLogin(authentication.getName()));
 
-        for (Order or:orders
-             ) {
-            System.out.println(or.getDishes().get(0).getDish().getName());
-        }
-
         if(!orders.isEmpty()){
             return ResponseEntity.ok(orders);
         }else {
@@ -102,6 +100,17 @@ public class OrderRestControllerV1 {
             return ResponseEntity.ok("Ok");
         }else {
             return ResponseEntity.badRequest().body("Error");
+        }
+    }
+
+    @GetMapping("/table/getAll")
+    public ResponseEntity getAllTable(){
+        List<Table> tables = tableService.getAll();
+
+        if(!tables.isEmpty()){
+            return ResponseEntity.ok(tables);
+        }else {
+            return ResponseEntity.badRequest().body("No available tables");
         }
     }
 }
