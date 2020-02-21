@@ -47,7 +47,8 @@ public class AuthenticationRestControllerV1 {
 
     @PostMapping("login")
     public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto){
-
+        System.out.println(requestDto.getUsername());
+        System.out.println(requestDto.getPassword());
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestDto.getUsername(),
                     requestDto.getPassword()));
@@ -65,7 +66,7 @@ public class AuthenticationRestControllerV1 {
 
 
     @PostMapping("refresh")
-    public ResponseEntity refreshToken(@RequestBody RefreshJwtRequestDto requestDto) throws JwtAuthenticationException {
+    public ResponseEntity refreshToken(@RequestBody RefreshJwtRequestDto requestDto) {
         String username;
         ResponseEntity responseEntity;
         User user;

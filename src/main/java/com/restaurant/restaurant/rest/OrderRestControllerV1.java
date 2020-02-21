@@ -84,7 +84,7 @@ public class OrderRestControllerV1 {
     public ResponseEntity save(@RequestBody OrderDto orderDto, Authentication authentication){
         Order order = new Order(orderDto);
         order.setUser(userService.findByLogin(authentication.getName()));
-        if(orderService.save(order) != null){
+        if(!orderDto.getDishes().isEmpty() && orderService.save(order) != null){
             return ResponseEntity.ok("Ok");
         }else {
             return ResponseEntity.badRequest().body("Error");

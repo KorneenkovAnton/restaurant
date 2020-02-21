@@ -11,9 +11,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-/**
- * Created by Антон on 09.01.2020.
- */
 public class JwtTokenFilter extends GenericFilterBean {
 
     private JwtTokenProvider jwtTokenProvider;
@@ -30,11 +27,9 @@ public class JwtTokenFilter extends GenericFilterBean {
         try {
             if(token != null && jwtTokenProvider.validateToken(token)){
                 Authentication authentication = jwtTokenProvider.getAuth(token);
-
                 if(authentication != null){
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
-
             }
         } catch (JwtAuthenticationException e) {
             e.printStackTrace();

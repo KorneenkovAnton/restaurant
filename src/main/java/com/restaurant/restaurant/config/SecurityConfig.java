@@ -5,21 +5,17 @@ import com.restaurant.restaurant.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Role;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
-/**
- * Created by Антон on 09.01.2020.
- */
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private JwtTokenProvider jwtTokenProvider;
 
-    private static final String ADMIN_ENDPOINT = "/api/v1/admin/**";
+    private static final String ADMIN_ENDPOINT = "/api/v1/admin";
     private static final String LOGIN_ENDPOINT = "/resto/V1/auth/login";
     private static final String REFRESH_ENDPOINT = "/resto/V1/auth/refresh";
     private static final String REGISTER_ENDPOINT = "/resto/V1/auth/register";
@@ -43,9 +39,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(LOGIN_ENDPOINT,REFRESH_ENDPOINT,REGISTER_ENDPOINT).permitAll()
-                .antMatchers(ADMIN_ENDPOINT).hasRole(com.restaurant.restaurant.entity.Role.ADMIN.name())
-                .anyRequest().authenticated()
+                    .antMatchers("/css/**","/js/**","/favicon.ico","/webjars/jquery/2.2.4/jquery.min.js").permitAll()
+                    .antMatchers(LOGIN_ENDPOINT,REFRESH_ENDPOINT,REGISTER_ENDPOINT).permitAll()
+                    .antMatchers(ADMIN_ENDPOINT).hasRole(com.restaurant.restaurant.entity.Role.ADMIN.name())
+                    .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                    .loginPage("/login")
+                    .permitAll()
                 .and()
                 .apply(new JwtConfig(jwtTokenProvider));
     }
