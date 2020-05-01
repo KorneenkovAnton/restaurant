@@ -4,6 +4,7 @@ $(document).ready(function ($) {
         login();
     });
 });
+
 function login() {
     var authenticationDto = {}
     authenticationDto["username"] = $("#username").val();
@@ -18,21 +19,16 @@ function login() {
         timeout:10000,
         success:function (data) {
             console.log("SUCCESS",data);
+            localStorage.clear();
+            localStorage.setItem("accessToken",data.accessToken);
+            localStorage.setItem("refreshToken",data.refreshToken);
             display(data);
-            window.location.href = "main.html";
         },
         error:function (e) {
             console.log("ERROR",e);
             display(e);
-        },
-        done:function (e) {
-            display(e);
-            enableSearchButton(true);
         }
     });
-}
-function enableSearchButton(flag) {
-    $("#login-btn").prop("disabled", flag);
 }
 
 function display(data) {

@@ -1,6 +1,7 @@
 package com.restaurant.restaurant.service.table;
 
 import com.restaurant.restaurant.entity.Table;
+import com.restaurant.restaurant.entity.User;
 import com.restaurant.restaurant.repository.TableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,5 +46,13 @@ public class TableServiceImpl implements TableService {
 
     }
 
+    @Override
+    public String updateTable(String status, User user, String name) {
+        return String.valueOf(tableRepository.updateTableStatusAndUserIdByTableName(status,user,name));
+    }
 
+    @Override
+    public Table findByName(String name) {
+        return tableRepository.findByName(name);
+    }
 }

@@ -1,7 +1,9 @@
 package com.restaurant.restaurant.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.persistence.Table;
@@ -9,11 +11,15 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "dish")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Dish extends BaseEntity {
     private String name;
     private String description;
     private Integer cost;
     private Boolean availability;
+    @Column(name = "image_path")
+    private String imagePath;
 
     @ManyToOne
     @JsonBackReference
@@ -28,8 +34,5 @@ public class Dish extends BaseEntity {
         this.cost = cost;
         this.availability = availability;
         this.type = type;
-    }
-
-    public Dish() {
     }
 }

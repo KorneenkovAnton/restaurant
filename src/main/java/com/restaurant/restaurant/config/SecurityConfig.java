@@ -40,13 +40,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                     .antMatchers("/css/**","/js/**","/favicon.ico","/webjars/jquery/2.2.4/jquery.min.js").permitAll()
-                    .antMatchers(LOGIN_ENDPOINT,REFRESH_ENDPOINT,REGISTER_ENDPOINT).permitAll()
+                    .antMatchers(LOGIN_ENDPOINT,REFRESH_ENDPOINT,REGISTER_ENDPOINT,"/login").permitAll()
                     .antMatchers(ADMIN_ENDPOINT).hasRole(com.restaurant.restaurant.entity.Role.ADMIN.name())
+                    .antMatchers("/resto/V1/user/getImage/**").permitAll()
                     .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                    .loginPage("/login")
-                    .permitAll()
                 .and()
                 .apply(new JwtConfig(jwtTokenProvider));
     }

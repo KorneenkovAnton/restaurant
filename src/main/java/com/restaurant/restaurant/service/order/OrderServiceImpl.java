@@ -3,7 +3,7 @@ package com.restaurant.restaurant.service.order;
 import com.restaurant.restaurant.entity.Order;
 import com.restaurant.restaurant.entity.User;
 import com.restaurant.restaurant.repository.OrderRepository;
-import com.restaurant.restaurant.service.order.OrderService;
+import com.restaurant.restaurant.service.table.TableService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -13,14 +13,19 @@ import java.util.Optional;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
+    private final TableService tableService;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, TableService tableService) {
         this.orderRepository = orderRepository;
+        this.tableService = tableService;
     }
 
     @Override
     public Order save(Order order) {
+//        tableService.updateTable(order.getTable().getStatus(),order.getUser(),order.getTable().getName());
+        order.setTable(tableService.findByName(order.getTable().getName()));
+        order.getTable().setUser(order.getUser());
         return orderRepository.saveAndFlush(order);
     }
 

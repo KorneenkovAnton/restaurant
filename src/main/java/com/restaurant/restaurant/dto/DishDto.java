@@ -12,4 +12,5 @@ public class DishDto {
     private String description;
     private Integer cost;
     private Boolean availability;
+    private String imagePath;
 }
