@@ -12,5 +12,6 @@ import java.util.List;
 public interface OrderService extends Service<Order> {
 
     List<Order> getUserOrders(User user);
+    List<Order> getAllPreparingOrders();
 
 }

@@ -1,11 +1,14 @@
 package com.restaurant.restaurant.service.order;
 
+import com.itextpdf.text.DocumentException;
 import com.restaurant.restaurant.entity.Order;
 import com.restaurant.restaurant.entity.User;
 import com.restaurant.restaurant.repository.OrderRepository;
 import com.restaurant.restaurant.service.table.TableService;
+import com.restaurant.restaurant.util.ReceiptPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +34,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order update(Order order) {
-        return orderRepository.saveAndFlush(order);
+        String receiptPath;
+        Order updateOrder = orderRepository.getById(order.getId());
+        updateOrder.setStatus(order.getStatus());
+        if(order.getStatus().equals("Done")){
+            try {
+                System.out.println("printing");
+                receiptPath = new ReceiptPrinter().printReceipt(updateOrder);
+                updateOrder.setReceiptPath(receiptPath);
+            } catch (FileNotFoundException | DocumentException e) {
+                e.printStackTrace();
+            }
+        }
+        orderRepository.saveAndFlush(updateOrder);
+        return updateOrder;
     }
 
     @Override
@@ -54,5 +70,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> getUserOrders(User user) {
         return orderRepository.getByUserIs(user);
+    }
+
+    @Override
+    public List<Order> getAllPreparingOrders() {
+        return orderRepository.findAllByStatus("Preparing");
     }
 }

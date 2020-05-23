@@ -23,12 +23,12 @@ public class TableServiceImpl implements TableService {
 
     @Override
     public Table save(Table table) {
-        return null;
+        return tableRepository.save(table);
     }
 
     @Override
     public Table update(Table table) {
-        return null;
+        return tableRepository.save(table);
     }
 
     @Override

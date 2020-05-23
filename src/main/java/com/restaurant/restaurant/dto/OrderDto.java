@@ -22,4 +22,5 @@ public class OrderDto {
     private User user;
     private com.restaurant.restaurant.entity.Table table;
     private List<OrderDetailsDto> dishes;
+    private String receiptPath;
 }

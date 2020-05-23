@@ -12,4 +12,5 @@ import java.util.List;
 public interface DishService extends Service<Dish> {
     List<Dish> findByType(String type);
     List<DishType> getAllTypes();
+    DishType saveDishType(DishType type);
 }

@@ -58,4 +58,9 @@ public class DishServiceImpl implements DishService {
     public List<DishType> getAllTypes() {
         return dishTypeRepository.findAll();
     }
+
+    @Override
+    public DishType saveDishType(DishType type) {
+        return dishTypeRepository.save(type);
+    }
 }

@@ -1,12 +1,16 @@
 package com.restaurant.restaurant.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.itextpdf.text.Document;
 import com.restaurant.restaurant.dto.OrderDetailsDto;
 import com.restaurant.restaurant.dto.OrderDto;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.persistence.Table;
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +19,8 @@ import java.util.List;
 @Entity
 @Table(name = "rest_order")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Order extends BaseEntity {
     @Column(name = "order_date")
     private Date date;
@@ -37,6 +43,12 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "order_id")
     private List<OrderDetails> dishes;
 
+    @Column(name = "receipt_path")
+    private String receiptPath;
+
+    @Transient
+    private Document file;
+
     public Order(OrderDto orderDto) {
         this.date = new java.sql.Date(new Date().getTime());
         this.amount = orderDto.getAmount();
@@ -51,8 +63,5 @@ public class Order extends BaseEntity {
                     or.getDish().getName(),or.getDish().getDescription(),
                     or.getDish().getCost(),true,null)));
         }
-    }
-
-    public Order() {
     }
 }
