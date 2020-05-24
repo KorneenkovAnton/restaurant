@@ -17,6 +17,8 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final TableService tableService;
+    @Autowired
+    private ReceiptPrinter receiptPrinter;
 
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository, TableService tableService) {
@@ -40,9 +42,9 @@ public class OrderServiceImpl implements OrderService {
         if(order.getStatus().equals("Done")){
             try {
                 System.out.println("printing");
-                receiptPath = new ReceiptPrinter().printReceipt(updateOrder);
+                receiptPath = receiptPrinter.printReceipt(updateOrder);
                 updateOrder.setReceiptPath(receiptPath);
-            } catch (FileNotFoundException | DocumentException e) {
+            } catch (DocumentException e) {
                 e.printStackTrace();
             }
         }

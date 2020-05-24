@@ -4,9 +4,11 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.restaurant.restaurant.entity.Order;
 import com.restaurant.restaurant.entity.OrderDetails;
+import com.restaurant.restaurant.util.aws.AWSUtil;
 import lombok.Data;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -14,16 +16,20 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 @Service
-@Data
 public class ReceiptPrinter {
 
+    @Autowired
+    private AWSUtil awsUtil;
+
+    @Value("${aws.s3.bucket.receipts}")
+    private String AWS_BUCKET_RECEIPTS;
 
     @SneakyThrows
-    public String printReceipt(Order order) throws FileNotFoundException, DocumentException {
+    public String printReceipt(Order order) throws DocumentException {
         Document receipt = new Document();
         String fileName = order.getUser().getName()+order.getDate().getTime() + ".pdf";
-       // String fileName = order.getId() + ".pdf";
-        PdfWriter.getInstance(receipt,new FileOutputStream("src/main/resources/static/receipts/"+fileName));
+//        PdfWriter.getInstance(receipt,new FileOutputStream("src/main/resources/static/receipts/"+fileName));
+        PdfWriter.getInstance(receipt,new FileOutputStream(fileName));
 
         receipt.open();
         Font font = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
@@ -42,6 +48,11 @@ public class ReceiptPrinter {
         receipt.add(new Paragraph(String.format("%-15s %5s %10s\n", "----", "---", "-----"),font));
         receipt.add(new Paragraph(String.format("%-15s %5s %10s\n", "Total", "", String.valueOf(order.getAmount())),font));
         receipt.close();
+
+        File file = new File(fileName);
+        System.out.println(AWS_BUCKET_RECEIPTS);
+        awsUtil.uploadToAws(file,AWS_BUCKET_RECEIPTS);
+        file.delete();
 
         return fileName;
     }
