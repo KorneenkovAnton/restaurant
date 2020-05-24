@@ -29,7 +29,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order save(Order order) {
 //        tableService.updateTable(order.getTable().getStatus(),order.getUser(),order.getTable().getName());
-        order.setTable(tableService.findByName(order.getTable().getName()));
+        if(order.getTable() != null){
+            order.setTable(tableService.findByName(order.getTable().getName()));
+        }
         order.getTable().setUser(order.getUser());
         return orderRepository.saveAndFlush(order);
     }

@@ -38,14 +38,6 @@ public class FileRestControllerV1 {
     @RequestMapping("/getFile/{filePath}")
     @ResponseBody
     public byte[] getFile(@PathVariable String filePath, HttpServletRequest request) {
-//        File file;
-//        try {
-//            file = new File(getClass().getResource("/static/receipts/" + filePath).getFile());
-//        } catch (NullPointerException e) {
-//
-//            file = new File("src/main/resources/static/receipts/" + filePath);
-//        }
-
         return awsUtil.downloadFromAws(filePath,AWS_BUCKET_RECEIPTS);
     }
 
