@@ -1,17 +1,15 @@
 package com.restaurant.restaurant.rest;
 
+import com.amazonaws.http.RepeatableInputStreamRequestEntity;
 import com.restaurant.restaurant.dto.OrderDto;
 import com.restaurant.restaurant.dto.OrderUpdateDto;
-import com.restaurant.restaurant.entity.Dish;
-import com.restaurant.restaurant.entity.DishType;
-import com.restaurant.restaurant.entity.Order;
-import com.restaurant.restaurant.entity.Table;
+import com.restaurant.restaurant.dto.TableReservationDTO;
+import com.restaurant.restaurant.entity.*;
 import com.restaurant.restaurant.service.dish.DishService;
 import com.restaurant.restaurant.service.order.OrderService;
 import com.restaurant.restaurant.service.table.TableService;
+import com.restaurant.restaurant.service.table.reservation.TableReservationService;
 import com.restaurant.restaurant.service.user.UserService;
-import lombok.extern.log4j.Log4j;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -19,6 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.SqlResultSetMapping;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -31,15 +31,17 @@ public class OrderRestControllerV1 {
     private final UserService userService;
     private final TableService tableService;
     private final SimpMessagingTemplate template;
+    private final TableReservationService tableReservationService;
 
     @Autowired
     public OrderRestControllerV1(OrderService orderService, DishService dishService, UserService userService,
-                                 TableService tableService, SimpMessagingTemplate template) {
+                                 TableService tableService, SimpMessagingTemplate template, TableReservationService tableReservationService) {
         this.orderService = orderService;
         this.dishService = dishService;
         this.userService = userService;
         this.tableService = tableService;
         this.template = template;
+        this.tableReservationService = tableReservationService;
     }
 
     @GetMapping("/dish/getByType/{type}")
@@ -155,5 +157,33 @@ public class OrderRestControllerV1 {
         Dish newDish = dishService.save(dish);
 
         return newDish != null ? ResponseEntity.ok(newDish) : ResponseEntity.badRequest().body("Error save dish");
+    }
+
+    @GetMapping("/reserve/getByUser")
+    public ResponseEntity getReserveTableByUser(Authentication authentication) {
+        TableReservation tableReservation = tableReservationService.findByUser(userService.findByLogin(authentication.getName()));
+        return tableReservation != null ? ResponseEntity.ok(tableReservation) : ResponseEntity.ok("No reserved tables");
+    }
+
+    @PostMapping("/reserve/save")
+    public ResponseEntity saveReservedTable(@RequestBody TableReservationDTO tableReservationDTO, Authentication authentication) {
+        TableReservation tableReservation = new TableReservation();
+        tableReservation.setReservationDate(new Date(tableReservationDTO.getReservationDate()));
+        tableReservation.setTables(tableReservationDTO.getTables());
+        tableReservation.setUser(userService.findByLogin(authentication.getName()));
+        TableReservation savedReservation = tableReservationService.save(tableReservation);
+        return savedReservation != null ? ResponseEntity.ok(savedReservation) :
+                ResponseEntity.status(500).body("Error saving reserve");
+    }
+
+    @GetMapping("/reserve/all")
+    public ResponseEntity allReservedTables(){
+        return ResponseEntity.ok(tableReservationService.getAll());
+    }
+
+    @DeleteMapping("/reserve/delete/{id}")
+    public ResponseEntity deleteReservedTable(@PathVariable Long id){
+        tableReservationService.delete(id);
+        return ResponseEntity.ok().body("Reserve delete " + id);
     }
 }

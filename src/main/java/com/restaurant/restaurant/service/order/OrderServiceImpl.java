@@ -31,8 +31,9 @@ public class OrderServiceImpl implements OrderService {
 //        tableService.updateTable(order.getTable().getStatus(),order.getUser(),order.getTable().getName());
         if(order.getTable() != null){
             order.setTable(tableService.findByName(order.getTable().getName()));
+            order.getTable().setUser(order.getUser());
         }
-        order.getTable().setUser(order.getUser());
+
         return orderRepository.saveAndFlush(order);
     }
 

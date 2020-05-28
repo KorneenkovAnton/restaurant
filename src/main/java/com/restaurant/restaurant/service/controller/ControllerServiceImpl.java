@@ -46,6 +46,7 @@ public class ControllerServiceImpl implements ControllerService {
         Map<Object,Object> response = new HashMap<>();
         response.put("accessToken",accessToken);
         response.put("refreshToken",refreshToken);
+        response.put("role",user.getRole().toString());
 
         return response;
     }
